@@ -1,0 +1,618 @@
+﻿@*@model WebApplication2.Models.Order
+    @using System.Linq
+    @{
+        Layout = null;
+        var payments = ViewBag.Payments as List<WebApplication2.Models.Order>;
+
+    }
+
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: B nazanin, sans-serif;
+                max-width: 1000px;
+                margin: 0 auto;
+                font-size: 15px;
+            }
+
+            /*.container {
+                max-width: 800px;
+                margin: 0 auto;
+                margin-top: 20px;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
+                border-radius: 10px;
+            }*/
+
+            .breadcrumb-custom {
+                font-size: 15px;
+                margin-bottom: 20px;
+                margin-top: 20px;
+            }
+
+            .breadcrumb-item {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            .IsAgreementAccepted {
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .form-layer {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 20px;
+                background: #f6f6f6;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+
+            .form-group {
+                margin-bottom: 20px;
+                overflow: auto;
+            }
+
+                .form-group label {
+                    /*font-family: 'B Nazanin Outline';*/
+                    font-weight: bold;
+                    font-size: 13px;
+                }
+
+                .form-group input {
+                    /*font-family: 'B Nazanin Outline';*/
+                    font-size: 15px;
+                    border-radius: 5px;
+                }
+
+                .form-group select {
+                    /*font-family: 'B Nazanin Outline';*/
+                    font-size: 15px;
+                    border-radius: 5px;
+                }
+
+            .form-control {
+                /*padding-left: 150px;*/
+                border-radius: 0 5px 5px 0;
+                width: 100%;
+            }
+
+            .link {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+                .link a {
+                    text-decoration: none;
+                }
+
+            .btn {
+                width: 100%;
+                padding: 5px;
+                text-align: center;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .text-danger {
+                margin-top: 10px;
+            }
+
+            #paragraph {
+                background-color: lightseagreen;
+                color: white;
+                font-size: 15px;
+                padding-right: 22px;
+                padding-top: 5px;
+                width: 100%;
+                height: 30px;
+            }
+
+            .alert-success {
+                color: #155724;
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+                font-size: 15px;
+            }
+
+            .alert-danger {
+                color: #721c24;
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+                font-size: 15px;
+            }
+
+            .agreement-checkbox {
+                display: flex;
+            }
+
+                .agreement-checkbox label {
+                    margin-left: -95px;
+                    margin-right: 40px;
+                    margin-bottom: 0;
+                }
+
+                .agreement-checkbox input[type="checkbox"]:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                .agreement-checkbox input[type="text"]:focus {
+                    outline: none;
+                    box-shadow: none;
+                    font-size: 15px;
+                }
+
+            .small-checkbox {
+                width: 16px;
+                height: 16px;
+            }
+
+            a {
+                text-decoration: none;
+                color: #007bff;
+            }
+
+                a:hover {
+                    text-decoration: none;
+                    color: #0056b3;
+                }
+        </style>
+    </head>
+    <body style="text-align:right;">
+        <div class="container">
+            <div class="form-layer">
+                <form asp-action="Payment" asp-controller="Payment" method="post">
+                    <p id="paragraph">اطلاعات</p>
+                    <div class="form-group">
+                        <label asp-for="CustomerName">نام مشتری</label><br />
+                        <input asp-for="CustomerName" type="text" class="form-control" placeholder="نام مشتری">
+                        <span asp-validation-for="CustomerName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Amount">مبلغ</label><br />
+                        <input asp-for="Amount" type="number" class="form-control" placeholder="مبلغ">
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Phone">شماره همراه</label><br />
+                        <input asp-for="Phone" type="number" class="form-control" placeholder="شماره همراه">
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description">توضیحات</label><br />
+                        <textarea asp-for="Description" type="text" class="form-control" placeholder="توضیحات"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <button class="btn btn-success btn-hover-light"> ورود به صفحه پرداخت </button>
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <p style="color:red;">@ViewBag.ErrorMessage</p>
+                    }
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>نام مشتری</th>
+                            <th>مبلغ</th>
+                            <th>شماره تماس</th>
+                            <th>توضیحات</th>
+                            <th>لینک پرداخت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in payments)
+                        {
+                            <tr>
+                                <td>@item.CustomerName</td>
+                                <td>@item.Amount</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Description</td>
+                                <td>@item.PaymentUrl</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>
+    @model WebApplication2.Models.Order
+    @using System.Linq
+    @{
+        Layout = null;
+        var payments = ViewBag.Payments as List<WebApplication2.Models.Order>;
+
+    }
+
+    <!DOCTYPE html>
+
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: B nazanin, sans-serif;
+                max-width: 1000px;
+                margin: 0 auto;
+                font-size: 15px;
+            }
+            .breadcrumb-custom {
+                font-size: 15px;
+                margin-bottom: 20px;
+                margin-top: 20px;
+            }
+
+            .breadcrumb-item {
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            .IsAgreementAccepted {
+                max-height: 200px;
+                overflow-y: auto;
+                background-color: #f1f1f1;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .form-layer {
+                max-width: 500px;
+                margin: 0 auto;
+                padding: 20px;
+                background: #f6f6f6;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+
+            .form-group {
+                margin-bottom: 20px;
+                overflow: auto;
+            }
+
+                .form-group label {
+                    font-weight: bold;
+                    font-size: 13px;
+                }
+
+                .form-group input {
+                    font-size: 15px;
+                    border-radius: 5px;
+                }
+
+                .form-group select {
+                    font-size: 15px;
+                    border-radius: 5px;
+                }
+
+            .form-control {
+                border-radius: 0 5px 5px 0;
+                width: 100%;
+            }
+
+            .link {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+                .link a {
+                    text-decoration: none;
+                }
+
+            .btn {
+                width: 100%;
+                padding: 5px;
+                text-align: center;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .text-danger {
+                margin-top: 10px;
+            }
+
+            #paragraph {
+                background-color: lightseagreen;
+                color: white;
+                font-size: 15px;
+                padding-right: 22px;
+                padding-top: 5px;
+                width: 100%;
+                height: 30px;
+            }
+
+            .alert-success {
+                color: #155724;
+                background-color: #d4edda;
+                border-color: #c3e6cb;
+                font-size: 15px;
+            }
+
+            .alert-danger {
+                color: #721c24;
+                background-color: #f8d7da;
+                border-color: #f5c6cb;
+                font-size: 15px;
+            }
+
+            .agreement-checkbox {
+                display: flex;
+            }
+
+                .agreement-checkbox label {
+                    margin-left: -95px;
+                    margin-right: 40px;
+                    margin-bottom: 0;
+                }
+
+                .agreement-checkbox input[type="checkbox"]:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                .agreement-checkbox input[type="text"]:focus {
+                    outline: none;
+                    box-shadow: none;
+                    font-size: 15px;
+                }
+
+            .small-checkbox {
+                width: 16px;
+                height: 16px;
+            }
+
+            a {
+                text-decoration: none;
+                color: #007bff;
+            }
+
+                a:hover {
+                    text-decoration: none;
+                    color: #0056b3;
+                }
+        </style>
+    </head>
+    <body style="text-align:right;">
+        <div class="container">
+            <div class="form-layer">
+                <form asp-action="Payment" asp-controller="Payment" method="post">
+                    <p id="paragraph">اطلاعات</p>
+                    <div class="form-group">
+                        <label asp-for="CustomerName">نام مشتری</label><br />
+                        <input asp-for="CustomerName" type="text" class="form-control" placeholder="نام مشتری">
+                        <span asp-validation-for="CustomerName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Amount">مبلغ</label><br />
+                        <input asp-for="Amount" type="number" class="form-control" placeholder="مبلغ">
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Phone">شماره همراه</label><br />
+                        <input asp-for="Phone" type="number" class="form-control" placeholder="شماره همراه">
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description">توضیحات</label><br />
+                        <textarea asp-for="Description" type="text" class="form-control" placeholder="توضیحات"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <button class="btn btn-success btn-hover-light"> ورود به صفحه پرداخت </button>
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <p style="color:red;">@ViewBag.ErrorMessage</p>
+                    }
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>نام مشتری</th>
+                            <th>مبلغ</th>
+                            <th>شماره تماس</th>
+                            <th>توضیحات</th>
+                            <th>لینک پرداخت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in payments)
+                        {
+                            <tr>
+                                <td>@item.CustomerName</td>
+                                <td>@item.Amount</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Description</td>
+                                <td>@item.PaymentUrl</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+    </html>*@
+
+
+@model WebApplication2.Models.Order
+@using System.Linq
+@{
+    Layout = null;
+    var payments = ViewBag.Payments as List<WebApplication2.Models.Order>;
+}
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>ایجاد لینک پرداخت</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'B Nazanin', sans-serif;
+            direction: rtl;
+        }
+
+        .container {
+            margin-top: 40px;
+        }
+
+        .form-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        h4 {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        .btn-success {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        }
+
+        thead {
+            background-color: #28a745;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .text-danger {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h4>فرم ایجاد لینک پرداخت</h4>
+            <form asp-action="Payment" asp-controller="Payment" method="post">
+                <div class="form-group">
+                    <label asp-for="CustomerName">نام مشتری</label>
+                    <input asp-for="CustomerName" type="text" class="form-control" placeholder="نام مشتری">
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Amount">مبلغ (تومان)</label>
+                    <input asp-for="Amount" type="number" class="form-control" placeholder="مبلغ">
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Phone">شماره همراه</label>
+                    <input asp-for="Phone" type="tel" class="form-control" placeholder="شماره همراه">
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description">توضیحات</label>
+                    <textarea asp-for="Description" class="form-control" placeholder="توضیحات"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <button class="btn btn-success btn-hover-light">ایجاد لینک پرداخت</button>
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger mt-3">@ViewBag.ErrorMessage</div>
+                }
+            </form>
+        </div>
+
+        @if (payments != null && payments.Any())
+        {
+            <h4>لیست لینک‌های پرداخت ایجاد شده</h4>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>نام مشتری</th>
+                        <th>مبلغ</th>
+                        <th>شماره تماس</th>
+                        <th>توضیحات</th>
+                        <th>لینک پرداخت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in payments)
+                    {
+                        <tr>
+                            <td>@item.CustomerName</td>
+                            <td>@item.Amount.ToString("N0") تومان</td>
+                            <td>@item.Phone</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <a href="@item.PaymentUrl" target="_blank">@item.PaymentUrl</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                هنوز هیچ لینک پرداختی ثبت نشده است.
+            </div>
+        }
+    </div>
+</body>
+</html>
+

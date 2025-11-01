@@ -1,0 +1,41 @@
+﻿.header {
+    background-color: #f8f9fa; 
+    padding: 15px;
+    border-bottom: 1px solid #e3e6f0;
+
+}
+
+    .header img {
+        margin-right: 20px; 
+    }
+
+    .header .search-form {
+        display: flex;
+        align-items: center;
+    }
+
+        .header .search-form .form-control {
+            width: 300px; 
+        }
+
+        .header .search-form .btn {
+            border-radius: 0 4px 4px 0; 
+        }
+
+    
+
+    .header .d-flex.align-items-center a {
+        margin-left: 10px;
+    }
+
+
+
+    .header .navbar-nav .nav-item .nav-link {
+        color: #495057; 
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+        .header .navbar-nav .nav-item .nav-link:hover {
+            color: #007bff; 
+        }
